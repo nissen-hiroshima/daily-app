@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>業務日報</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f3f3;
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+            color: #333;
+        }
+
+        .report {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 35px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .back-button {
+            padding: 10px 20px;
+            border: 1px solid #aaa;
+            background: white;
+            cursor: pointer;
+        }
+
+        .header {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 25px;
+        }
+
+        .header-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #aaa;
+        }
+
+        #date {
+            width: 170px;
+        }
+
+        #name {
+            width: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #888;
+            padding: 7px;
+        }
+
+        th {
+            background: #eeeeee;
+            text-align: center;
+        }
+
+        .time {
+            width: 100px;
+            text-align: center;
+        }
+
+        .time input {
+            width: 90px;
+        }
+
+        .work input {
+            width: 100%;
+        }
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #aaa;
+            resize: vertical;
+        }
+
+        .admin textarea {
+            background: #f7f7f7;
+        }
+
+        .button-area {
+            text-align: center;
+            margin-top: 35px;
+        }
+
+        .save-button {
+            padding: 14px 60px;
+            border: none;
+            background: #333;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .save-button:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .report {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .top {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .menu-table {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="report">
+
+    <div class="top">
+
+        <h1>業務日報</h1>
+
+        <button class="back-button" onclick="goHome()">
+            ← 業務アプリTOP
+        </button>
+
+    </div>
+
+
+    <!-- 日付・氏名 -->
+
+    <div class="header">
+
+        <div class="header-item">
+
+            <label for="date">日付</label>
+
+            <input
+                type="date"
+                id="date"
+            >
+
+        </div>
+
+
+        <div class="header-item">
+
+            <label for="name">氏名</label>
+
+            <input
+                type="text"
+                id="name"
+                placeholder="氏名を入力"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- 作業内容 -->
+
+    <div class="menu-table">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th colspan="2">
+                        時間
+                    </th>
+
+                    <th>
+                        作業内容・訪問先
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="time">
+                        <input type="time">
+                    </td>
+
+                    <td class="work">
+                        <input type="text">
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- 報告・連絡・相談 -->
+
+    <div class="section">
+
+        <div class="section-title">
+            報告・連絡・相談事項
+        </div>
+
+        <textarea
+            id="report"
+            placeholder="報告・連絡・相談事項を入力してください">
+        </textarea>
+
+    </div>
+
+
+    <!-- 明日の予定 -->
+
+    <div class="section">
+
+        <div class="section-title">
+            明日の予定
+        </div>
+
+        <textarea
+            id="tomorrow"
+            placeholder="明日の予定を入力してください">
+        </textarea>
+
+    </div>
+
+
+    <!-- 管理者から -->
+
+    <div class="section admin">
+
+        <div class="section-title">
+            管理者から
+        </div>
+
+        <textarea
+            id="adminComment"
+            placeholder="管理者からのコメント"
+            readonly>
+        </textarea>
+
+    </div>
+
+
+    <!-- 登録 -->
+
+    <div class="button-area">
+
+        <button
+            class="save-button"
+            onclick="saveReport()">
+
+            日報を登録する
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function saveReport() {
+
+    const rows = document.querySelectorAll("tbody tr");
+    const workData = [];
+
+    rows.forEach(function(row) {
+
+        const inputs = row.querySelectorAll("input");
+
+        workData.push({
+            start: inputs[0].value,
+            end: inputs[1].value,
+            content: inputs[2].value
+        });
+
+    });
+
+    const data = {
+
+        date: document.getElementById("date").value,
+
+        name: document.getElementById("name").value,
+
+        work: workData,
+
+        report: document.getElementById("report").value,
+
+        tomorrow: document.getElementById("tomorrow").value,
+
+        adminComment: document.getElementById("adminComment").value
+
+    };
+
+    const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbwsjbYUoSzwzz2ftgYn-BVX-vA1PdixZ_xpA1egFNxgTVQjbeIoa_8mMT02wu2WVa_f0w/exec";
+
+    try {
+
+        await fetch(GAS_URL, {
+
+            method: "POST",
+
+            mode: "no-cors",
+
+            body: JSON.stringify(data)
+
+        });
+
+        alert("日報を登録しました！");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("登録に失敗しました。");
+
+    }
+
+}
+
+function goHome() {
+
+    window.location.href = "index.html";
+
+}
+
+</script>
+
+</body>
+</html>

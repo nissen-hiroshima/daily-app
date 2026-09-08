@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>日報一覧</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f3f3;
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: 1px solid #aaa;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .search-box label {
+            margin-right: 10px;
+        }
+
+        .search-box input {
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .report-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .report-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .report-header {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .work {
+            margin-top: 10px;
+            padding: 12px;
+            background: #f7f7f7;
+            white-space: pre-wrap;
+        }
+
+        .empty {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .search-box {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .search-box label {
+                margin: 0;
+            }
+
+            .report-header {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top">
+
+        <h1>日報一覧</h1>
+
+        <button onclick="goHome()">
+            ← 業務アプリTOP
+        </button>
+
+    </div>
+
+
+    <!-- 検索 -->
+
+    <div class="search-box">
+
+        <label>
+            日付：
+            <input type="date" id="searchDate">
+        </label>
+
+        <label>
+            氏名：
+            <input type="text" id="searchName" placeholder="氏名を入力">
+        </label>
+
+        <button onclick="searchReports()">
+            検索
+        </button>
+
+        <button onclick="loadReports()">
+            すべて表示
+        </button>
+
+    </div>
+
+
+    <!-- 日報一覧 -->
+
+    <div class="report-list">
+
+        <div class="empty">
+            日報を読み込んでいます……
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const GAS_URL =
+    "https://script.google.com/macros/s/AKfycbwsjbYUoSzwzz2ftgYn-BVX-vA1PdixZ_xpA1egFNxgTVQjbeIoa_8mMT02wu2WVa_f0w/exec";
+
+
+let allReports = [];
+
+
+// TOPへ戻る
+
+function goHome() {
+
+    window.location.href = "index.html";
+
+}
+
+
+// 日報を読み込む
+
+async function loadReports() {
+
+    const list =
+        document.querySelector(".report-list");
+
+    try {
+
+        const response =
+            await fetch(GAS_URL);
+
+        const data =
+            await response.json();
+
+        allReports = data;
+
+        displayReports(allReports);
+
+    } catch (error) {
+
+        console.error(error);
+
+        list.innerHTML = `
+            <div class="empty">
+                日報の読み込みに失敗しました。
+            </div>
+        `;
+
+    }
+
+}
+
+
+// 日報を表示する
+
+function displayReports(reports) {
+
+    const list =
+        document.querySelector(".report-list");
+
+    list.innerHTML = "";
+
+
+    if (reports.length === 0) {
+
+        list.innerHTML = `
+            <div class="empty">
+                該当する日報がありません。
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // 新しい日報を上に表示
+
+    const sortedReports =
+        [...reports].reverse();
+
+
+    sortedReports.forEach(function(report) {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "report-card";
+
+card.style.cursor = "pointer";
+
+card.onclick = function() {
+
+    const savedReports =
+        JSON.parse(
+            localStorage.getItem("adminComments") || "{}"
+        );
+
+    const key =
+        String(report.date || "") + "_" +
+        String(report.name || "");
+
+    if (savedReports[key]) {
+        report.adminComment =
+            savedReports[key];
+    }
+
+    localStorage.setItem(
+        "selectedReport",
+        JSON.stringify(report)
+    );
+
+    window.location.href = "report-detail.html";
+
+};
+
+        // 日付を検索用の形式に統一
+
+        let reportDate = "";
+
+        if (report.date) {
+
+            const date =
+                new Date(report.date);
+
+            if (!isNaN(date)) {
+
+                reportDate =
+                    date.getFullYear() +
+                    "-" +
+                    String(date.getMonth() + 1).padStart(2, "0") +
+                    "-" +
+                    String(date.getDate()).padStart(2, "0");
+
+            } else {
+
+                reportDate =
+                    String(report.date)
+                    .replace(/\//g, "-")
+                    .substring(0, 10);
+
+            }
+
+        }
+
+
+        card.dataset.date =
+            reportDate;
+
+        card.dataset.name =
+            String(report.name || "");
+
+
+        // 作業内容
+
+        let workText = "";
+
+        if (Array.isArray(report.work)) {
+
+            report.work.forEach(function(work) {
+
+                if (
+                    work.start ||
+                    work.end ||
+                    work.content
+                ) {
+
+                    workText +=
+                        `${work.start || ""}～${work.end || ""}　${work.content || ""}\n`;
+
+                }
+
+            });
+
+        }
+
+
+        // 表示用の日付
+
+        let displayDate =
+            reportDate.replace(/-/g, "/");
+
+
+        card.innerHTML = `
+
+            <div class="report-header">
+
+                <div>
+                    日付：${displayDate}
+                </div>
+
+                <div>
+                    氏名：${report.name || ""}
+                </div>
+
+            </div>
+
+
+            <div class="work">
+                ${workText || "作業内容なし"}
+            </div>
+
+
+            <p>
+
+                <strong>
+                    報告・連絡・相談事項
+                </strong>
+
+                <br>
+
+                ${report.report || ""}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    明日の予定
+                </strong>
+
+                <br>
+
+                ${report.tomorrow || ""}
+
+            </p>
+
+        `;
+
+
+        list.appendChild(card);
+
+    });
+
+}
+
+
+// 検索
+
+function searchReports() {
+
+    const searchDate =
+        document.getElementById("searchDate").value;
+
+    const searchName =
+        document.getElementById("searchName").value.trim();
+
+
+    const filteredReports =
+        allReports.filter(function(report) {
+
+            let reportDate = "";
+
+            if (report.date) {
+
+                const date =
+                    new Date(report.date);
+
+                if (!isNaN(date)) {
+
+                    reportDate =
+                        date.getFullYear() +
+                        "-" +
+                        String(date.getMonth() + 1).padStart(2, "0") +
+                        "-" +
+                        String(date.getDate()).padStart(2, "0");
+
+                } else {
+
+                    reportDate =
+                        String(report.date)
+                        .replace(/\//g, "-")
+                        .substring(0, 10);
+
+                }
+
+            }
+
+
+            const dateMatch =
+                !searchDate ||
+                reportDate === searchDate;
+
+
+            const nameMatch =
+                !searchName ||
+                String(report.name || "")
+                .includes(searchName);
+
+
+            return dateMatch && nameMatch;
+
+        });
+
+
+    displayReports(filteredReports);
+
+}
+
+
+// ページを開いたら読み込む
+
+loadReports();
+
+</script>
+
+</body>
+</html>

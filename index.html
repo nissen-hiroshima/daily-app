@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>株式会社日宣プロダクト 業務アプリ</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+            background: #f3f3f3;
+            color: #333;
+        }
+
+        /* ヘッダー */
+        header {
+            background: white;
+            padding: 30px 50px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+            letter-spacing: 2px;
+        }
+
+        /* メイン */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 30px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .welcome h2 {
+            margin: 0 0 10px;
+            font-size: 28px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #777;
+        }
+
+        /* メニュー */
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .menu-card {
+            background: white;
+            min-height: 190px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .menu-card h3 {
+            margin: 0 0 10px;
+            font-size: 21px;
+        }
+
+        .menu-card p {
+            margin: 0;
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* スマホ対応 */
+        @media (max-width: 900px) {
+            .menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            main {
+                padding: 35px 20px;
+            }
+
+            .menu {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="company-name">
+        株式会社日宣プロダクト
+    </div>
+
+    <h1>業務アプリ</h1>
+</header>
+
+
+<main>
+
+    <div class="welcome">
+        <h2>業務メニュー</h2>
+        <p>社内業務に必要な機能を選択してください</p>
+    </div>
+
+
+    <div class="menu">
+
+        <!-- 業務日報 -->
+<div class="menu-card" onclick="openReport()">
+    <div class="icon">📝</div>
+    <h3>業務日報</h3>
+    <p>日報の入力・確認</p>
+
+    <div style="margin-top:15px;">
+        <button onclick="event.stopPropagation(); openReportList();">
+            日報一覧
+        </button>
+    </div>
+</div>
+
+
+        <!-- 制作管理 -->
+        <div class="menu-card" onclick="openProduction()">
+            <div class="icon">🎨</div>
+            <h3>制作管理</h3>
+            <p>案件・制作状況の管理</p>
+        </div>
+
+
+        <!-- カレンダー -->
+        <div class="menu-card" onclick="openSchedule()">
+            <div class="icon">📅</div>
+            <h3>会社カレンダー<br>各自スケジュール</h3>
+            <p>会社予定・個人予定</p>
+        </div>
+
+
+        <!-- 契約管理 -->
+        <div class="menu-card" onclick="openContract()">
+            <div class="icon">📄</div>
+            <h3>契約管理</h3>
+            <p>契約情報・更新管理</p>
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+function openReport() {
+    window.location.href = "report.html";
+}
+
+function openReportList() {
+    window.location.href = "report-list.html";
+}
+
+function openProduction() {
+    window.location.href = "https://script.google.com/macros/s/AKfycbzl0AnG0EYg3KnUi0G-a6OgByYGxd9p60e2hXxdw4cslAbxdFGkUZ557tBMdZKVGG1P/exec";
+}
+
+function openSchedule() {
+    alert("会社カレンダー・各自スケジュールを開きます");
+}
+
+function openContract() {
+    alert("契約管理を開きます");
+}
+
+</script>
+
+</body>
+</html>

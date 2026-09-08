@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>日報詳細</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f3f3f3;
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: 1px solid #aaa;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-info {
+            display: flex;
+            gap: 40px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
+
+        .work {
+            border: 1px solid #ddd;
+        }
+
+        .work-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .work-row:last-child {
+            border-bottom: none;
+        }
+
+        .work-time {
+            padding: 12px;
+            background: #f7f7f7;
+            text-align: center;
+        }
+
+        .work-content {
+            padding: 12px;
+        }
+
+        .text-box {
+            min-height: 100px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+        }
+
+        .admin {
+            background: #f7f7f7;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .work-row {
+                grid-template-columns: 1fr;
+            }
+
+            .work-time {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top">
+
+        <h1>日報詳細</h1>
+
+        <button onclick="goBack()">
+            ← 日報一覧へ戻る
+        </button>
+
+    </div>
+
+
+    <!-- 日付・氏名 -->
+
+    <div class="card">
+
+        <div class="header-info">
+
+            <div>
+                日付：<span id="date"></span>
+            </div>
+
+            <div>
+                氏名：<span id="name"></span>
+            </div>
+
+        </div>
+
+
+        <!-- 作業内容 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                作業内容・訪問先
+            </div>
+
+            <div class="work" id="work">
+            </div>
+
+        </div>
+
+
+        <!-- 報告・連絡・相談 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                報告・連絡・相談事項
+            </div>
+
+            <div class="text-box" id="report">
+            </div>
+
+        </div>
+
+
+        <!-- 明日の予定 -->
+
+        <div class="section">
+
+            <div class="section-title">
+                明日の予定
+            </div>
+
+            <div class="text-box" id="tomorrow">
+            </div>
+
+        </div>
+
+
+        <!-- 管理者から -->
+
+        <div class="section">
+
+            <div class="section-title">
+                管理者から
+            </div>
+
+            <div class="text-box admin" id="adminComment">
+</div>
+
+<div style="margin-top:15px;">
+    <button onclick="editAdminComment()">
+        管理者編集
+    </button>
+
+    <button
+        id="saveAdminButton"
+        onclick="saveAdminComment()"
+        style="display:none; margin-left:10px;"
+    >
+        保存
+    </button>
+</div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function goBack() {
+
+    window.location.href = "report-list.html";
+
+}
+
+
+// 選択した日報を読み込む
+
+function loadReport() {
+
+    const data =
+        localStorage.getItem("selectedReport");
+
+    if (!data) {
+
+        alert("日報データが見つかりません。");
+
+        goBack();
+
+        return;
+    }
+
+    const report =
+        JSON.parse(data);
+
+
+    // 日付
+
+    let reportDate = "";
+
+    if (report.date) {
+
+        const date =
+            new Date(report.date);
+
+        if (!isNaN(date)) {
+
+            reportDate =
+                date.getFullYear() +
+                "/" +
+                String(date.getMonth() + 1).padStart(2, "0") +
+                "/" +
+                String(date.getDate()).padStart(2, "0");
+
+        } else {
+
+            reportDate =
+                String(report.date)
+                .replace(/-/g, "/")
+                .substring(0, 10);
+
+        }
+
+    }
+
+
+    document.getElementById("date").textContent =
+        reportDate;
+
+    document.getElementById("name").textContent =
+        report.name || "";
+
+
+    // 作業内容
+
+    const work =
+        document.getElementById("work");
+
+    work.innerHTML = "";
+
+
+    if (Array.isArray(report.work)) {
+
+        report.work.forEach(function(item) {
+
+            if (
+                item.start ||
+                item.end ||
+                item.content
+            ) {
+
+                const row =
+                    document.createElement("div");
+
+                row.className = "work-row";
+
+
+                const time =
+                    document.createElement("div");
+
+                time.className = "work-time";
+
+                time.textContent =
+                    `${item.start || ""}～${item.end || ""}`;
+
+
+                const content =
+                    document.createElement("div");
+
+                content.className = "work-content";
+
+                content.textContent =
+                    item.content || "";
+
+
+                row.appendChild(time);
+
+                row.appendChild(content);
+
+                work.appendChild(row);
+
+            }
+
+        });
+
+    }
+
+
+    // 報告・連絡・相談
+
+    document.getElementById("report").textContent =
+        report.report || "";
+
+
+    // 明日の予定
+
+    document.getElementById("tomorrow").textContent =
+        report.tomorrow || "";
+
+
+    // 管理者から
+
+document.getElementById("adminComment").textContent =
+    report.adminComment || "";
+}
+
+
+// ページを開いたら読み込む
+
+loadReport();
+
+function editAdminComment() {
+
+    const box = document.getElementById("adminComment");
+
+    const currentText = box.textContent;
+
+    box.innerHTML = "";
+
+    const textarea = document.createElement("textarea");
+
+    textarea.id = "adminCommentInput";
+    textarea.value = currentText;
+
+    textarea.style.width = "100%";
+    textarea.style.minHeight = "100px";
+    textarea.style.padding = "15px";
+    textarea.style.fontSize = "15px";
+    textarea.style.fontFamily = "inherit";
+    textarea.style.boxSizing = "border-box";
+
+    box.appendChild(textarea);
+
+    document.getElementById("saveAdminButton").style.display = "inline-block";
+
+}
+
+
+function saveAdminComment() {
+
+    const data =
+        localStorage.getItem("selectedReport");
+
+    if (!data) {
+        alert("日報データが見つかりません。");
+        return;
+    }
+
+    const report =
+        JSON.parse(data);
+
+    const input =
+        document.getElementById("adminCommentInput");
+
+    if (!input) {
+        return;
+    }
+
+    const comment =
+        input.value;
+
+    const url =
+        "https://script.google.com/macros/s/AKfycbwsjbYUoSzwzz2ftgYn-BVX-vA1PdixZ_xpA1egFNxgTVQjbeIoa_8mMT02wu2WVa_f0w/exec" +
+        "?type=adminComment" +
+        "&date=" + encodeURIComponent(report.date) +
+        "&name=" + encodeURIComponent(report.name) +
+        "&adminComment=" + encodeURIComponent(comment);
+
+    fetch(url)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(result) {
+
+            if (!result.success) {
+                alert("保存に失敗しました。");
+                return;
+            }
+
+            // ブラウザにも保存
+            const savedComments =
+                JSON.parse(
+                    localStorage.getItem("adminComments") || "{}"
+                );
+
+            const key =
+                String(report.date || "") + "_" +
+                String(report.name || "");
+
+            savedComments[key] =
+                comment;
+
+            localStorage.setItem(
+                "adminComments",
+                JSON.stringify(savedComments)
+            );
+
+            report.adminComment =
+                comment;
+
+            localStorage.setItem(
+                "selectedReport",
+                JSON.stringify(report)
+            );
+
+            document.getElementById("adminComment").textContent =
+                comment;
+
+            document.getElementById("saveAdminButton").style.display =
+                "none";
+
+            alert("管理者コメントを保存しました。");
+
+        })
+        .catch(function(error) {
+
+            console.error(error);
+
+            alert("保存に失敗しました。");
+
+        });
+}
+
+
+</script>
+
+</body>
+</html>
