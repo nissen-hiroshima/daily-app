@@ -32,12 +32,6 @@
             margin-bottom: 8px;
         }
 
-         .company-logo {
-    width: 200px;
-    height: auto;
-    display: block;
-    margin-bottom: 15px;
-}
         h1 {
             margin: 0;
             font-size: 32px;
@@ -130,14 +124,15 @@
                 grid-template-columns: 1fr;
             }
         }
-        
     </style>
 </head>
 
 <body>
 
 <header>
-    <img src="nissen-logo.png" class="company-logo">
+    <div class="company-name">
+        株式会社日宣プロダクト
+    </div>
 
     <h1>業務管理</h1>
 </header>
@@ -190,6 +185,13 @@
             <p>契約情報・更新管理</p>
         </div>
 
+                <!-- ID・パスワード管理 -->
+        <div class="menu-card" onclick="openPasswordManager()">
+            <div class="icon">🔐</div>
+            <h3>ID・パスワード管理</h3>
+            <p>各種サイトのID・パスワード管理</p>
+        </div>
+
     </div>
 
 </main>
@@ -215,6 +217,10 @@ function openSchedule() {
 
 function openContract() {
     alert("契約管理を開きます");
+}
+
+function openPasswordManager() {
+    window.location.href = "https://script.google.com/macros/s/AKfycbx8PeP2-LfTshczn71OMwd0XUDJ-6RKMLHL35ObBAOPYfAVwOUjEjekRgXVuonrN6PuIg/exec;
 }
 
 </script>
