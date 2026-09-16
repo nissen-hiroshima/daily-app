@@ -95,6 +95,87 @@
             color: #777;
         }
 
+        /* カレンダー */
+
+.calendar-box {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-header button {
+    padding: 8px 15px;
+}
+
+.calendar-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.calendar th {
+    padding: 10px;
+    background: #f5f5f5;
+    text-align: center;
+}
+
+.calendar td {
+    height: 90px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.calendar td:hover {
+    background: #f5f5f5;
+}
+
+.calendar .other-month {
+    color: #bbb;
+    background: #fafafa;
+}
+
+.calendar .today {
+    border: 2px solid #333;
+}
+
+.calendar-date {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.calendar-report {
+    font-size: 12px;
+    background: #e9eef7;
+    padding: 3px 5px;
+    margin-top: 4px;
+    border-radius: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.selected-date {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
         @media (max-width: 600px) {
 
             body {
@@ -165,15 +246,56 @@
     </div>
 
 
-    <!-- 日報一覧 -->
+    <!-- カレンダー -->
 
-    <div class="report-list">
+<div class="calendar-box">
 
-        <div class="empty">
-            日報を読み込んでいます……
+    <div class="calendar-header">
+
+        <button onclick="changeMonth(-1)">
+            ＜
+        </button>
+
+        <div class="calendar-title" id="calendarTitle">
         </div>
 
+        <button onclick="changeMonth(1)">
+            ＞
+        </button>
+
     </div>
+
+    <table class="calendar">
+
+        <thead>
+            <tr>
+                <th>月</th>
+                <th>火</th>
+                <th>水</th>
+                <th>木</th>
+                <th>金</th>
+                <th>土</th>
+                <th>日</th>
+            </tr>
+        </thead>
+
+        <tbody id="calendarBody">
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- 選択した日の日報 -->
+
+<div class="report-list" id="reportList">
+
+    <div class="empty">
+        カレンダーの日付をクリックしてください。
+    </div>
+
+</div>
 
 </div>
 
@@ -183,12 +305,12 @@
 const GAS_URL =
     "https://script.google.com/macros/s/AKfycbwsjbYUoSzwzz2ftgYn-BVX-vA1PdixZ_xpA1egFNxgTVQjbeIoa_8mMT02wu2WVa_f0w/exec";
 
-
 let allReports = [];
+
+let currentDate = new Date();
 
 
 // TOPへ戻る
-
 function goHome() {
 
     window.location.href = "index.html";
@@ -197,11 +319,7 @@ function goHome() {
 
 
 // 日報を読み込む
-
 async function loadReports() {
-
-    const list =
-        document.querySelector(".report-list");
 
     try {
 
@@ -213,13 +331,13 @@ async function loadReports() {
 
         allReports = data;
 
-        displayReports(allReports);
+        createCalendar();
 
     } catch (error) {
 
         console.error(error);
 
-        list.innerHTML = `
+        document.getElementById("reportList").innerHTML = `
             <div class="empty">
                 日報の読み込みに失敗しました。
             </div>
@@ -230,30 +348,267 @@ async function loadReports() {
 }
 
 
-// 日報を表示する
+// 日付をYYYY-MM-DDにする
+function formatDate(date) {
 
-function displayReports(reports) {
+    return date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0");
+
+}
+
+
+// 日報の日付を統一
+function getReportDate(report) {
+
+    if (!report.date) {
+        return "";
+    }
+
+    const date =
+        new Date(report.date);
+
+    if (!isNaN(date)) {
+
+        return formatDate(date);
+
+    }
+
+    return String(report.date)
+        .replace(/\//g, "-")
+        .substring(0, 10);
+
+}
+
+
+// カレンダー作成
+function createCalendar() {
+
+    const year =
+        currentDate.getFullYear();
+
+    const month =
+        currentDate.getMonth();
+
+    document.getElementById("calendarTitle").textContent =
+        year + "年" + (month + 1) + "月";
+
+
+    const firstDay =
+        new Date(year, month, 1);
+
+    const lastDay =
+        new Date(year, month + 1, 0);
+
+
+    const startDay =
+        (firstDay.getDay() + 6) % 7;
+
+    const daysInMonth =
+        lastDay.getDate();
+
+
+    const tbody =
+        document.getElementById("calendarBody");
+
+    tbody.innerHTML = "";
+
+
+    let day = 1;
+
+
+    for (let week = 0; week < 6; week++) {
+
+        const tr =
+            document.createElement("tr");
+
+
+        for (let weekday = 0; weekday < 7; weekday++) {
+
+            const td =
+                document.createElement("td");
+
+
+            // 前月部分
+            if (week === 0 && weekday < startDay) {
+
+                const prevDate =
+                    new Date(year, month, 0 - (startDay - weekday - 1));
+
+                td.className = "other-month";
+
+                td.innerHTML = `
+                    <div class="calendar-date">
+                        ${prevDate.getDate()}
+                    </div>
+                `;
+
+            }
+
+            // 翌月部分
+            else if (day > daysInMonth) {
+
+                const nextDate =
+                    new Date(year, month, day);
+
+                td.className = "other-month";
+
+                td.innerHTML = `
+                    <div class="calendar-date">
+                        ${nextDate.getDate()}
+                    </div>
+                `;
+
+                day++;
+
+            }
+
+            // 当月
+            else {
+
+                const date =
+                    new Date(year, month, day);
+
+                const dateString =
+                    formatDate(date);
+
+
+                td.innerHTML = `
+                    <div class="calendar-date">
+                        ${day}
+                    </div>
+                `;
+
+
+                // 今日
+                const today =
+                    new Date();
+
+                if (
+                    dateString ===
+                    formatDate(today)
+                ) {
+
+                    td.classList.add("today");
+
+                }
+
+
+                // その日に日報があるか確認
+                const dayReports =
+                    allReports.filter(function(report) {
+
+                        return getReportDate(report) === dateString;
+
+                    });
+
+
+                // 日報がある場合
+                dayReports.forEach(function(report) {
+
+                    const reportDiv =
+                        document.createElement("div");
+
+                    reportDiv.className =
+                        "calendar-report";
+
+                    reportDiv.textContent =
+                        report.name || "日報あり";
+
+                    td.appendChild(reportDiv);
+
+                });
+
+
+                // 日付クリック
+                td.onclick = function() {
+
+                    showReportsByDate(dateString);
+
+                };
+
+
+                day++;
+
+            }
+
+
+            tr.appendChild(td);
+
+        }
+
+
+        tbody.appendChild(tr);
+
+        if (day > daysInMonth) {
+            break;
+        }
+
+    }
+
+}
+
+
+// 月を変更
+function changeMonth(amount) {
+
+    currentDate.setMonth(
+        currentDate.getMonth() + amount
+    );
+
+    createCalendar();
+
+}
+
+
+// 選択した日の一覧を表示
+function showReportsByDate(dateString) {
 
     const list =
-        document.querySelector(".report-list");
+        document.getElementById("reportList");
+
+    const reports =
+        allReports.filter(function(report) {
+
+            return getReportDate(report) === dateString;
+
+        });
+
 
     list.innerHTML = "";
 
 
+    // 日報がない場合
     if (reports.length === 0) {
 
         list.innerHTML = `
             <div class="empty">
-                該当する日報がありません。
+                この日の日報はありません。
             </div>
         `;
 
         return;
+
     }
 
 
-    // 新しい日報を上に表示
+    // 日付表示
+    const title =
+        document.createElement("div");
 
+    title.className =
+        "selected-date";
+
+    title.textContent =
+        dateString.replace(/-/g, "/") +
+        "の日報";
+
+    list.appendChild(title);
+
+
+    // 新しい順
     const sortedReports =
         [...reports].reverse();
 
@@ -263,75 +618,50 @@ function displayReports(reports) {
         const card =
             document.createElement("div");
 
-        card.className = "report-card";
+        card.className =
+            "report-card";
 
-card.style.cursor = "pointer";
+        card.style.cursor =
+            "pointer";
 
-card.onclick = function() {
 
-    const savedReports =
-        JSON.parse(
-            localStorage.getItem("adminComments") || "{}"
-        );
+        card.onclick = function() {
 
-    const key =
-        String(report.date || "") + "_" +
-        String(report.name || "");
+            const savedReports =
+                JSON.parse(
+                    localStorage.getItem("adminComments") || "{}"
+                );
 
-    if (savedReports[key]) {
-        report.adminComment =
-            savedReports[key];
-    }
 
-    localStorage.setItem(
-        "selectedReport",
-        JSON.stringify(report)
-    );
+            const key =
+                String(report.date || "") +
+                "_" +
+                String(report.name || "");
 
-    window.location.href = "report-detail.html";
 
-};
+            if (savedReports[key]) {
 
-        // 日付を検索用の形式に統一
-
-        let reportDate = "";
-
-        if (report.date) {
-
-            const date =
-                new Date(report.date);
-
-            if (!isNaN(date)) {
-
-                reportDate =
-                    date.getFullYear() +
-                    "-" +
-                    String(date.getMonth() + 1).padStart(2, "0") +
-                    "-" +
-                    String(date.getDate()).padStart(2, "0");
-
-            } else {
-
-                reportDate =
-                    String(report.date)
-                    .replace(/\//g, "-")
-                    .substring(0, 10);
+                report.adminComment =
+                    savedReports[key];
 
             }
 
-        }
+
+            localStorage.setItem(
+                "selectedReport",
+                JSON.stringify(report)
+            );
 
 
-        card.dataset.date =
-            reportDate;
+            window.location.href =
+                "report-detail.html";
 
-        card.dataset.name =
-            String(report.name || "");
+        };
 
 
         // 作業内容
-
         let workText = "";
+
 
         if (Array.isArray(report.work)) {
 
@@ -353,18 +683,12 @@ card.onclick = function() {
         }
 
 
-        // 表示用の日付
-
-        let displayDate =
-            reportDate.replace(/-/g, "/");
-
-
         card.innerHTML = `
 
             <div class="report-header">
 
                 <div>
-                    日付：${displayDate}
+                    日付：${dateString.replace(/-/g, "/")}
                 </div>
 
                 <div>
@@ -374,9 +698,7 @@ card.onclick = function() {
             </div>
 
 
-            <div class="work">
-                ${workText || "作業内容なし"}
-            </div>
+            <div class="work">${workText || "作業内容なし"}</div>
 
 
             <p>
@@ -414,71 +736,7 @@ card.onclick = function() {
 }
 
 
-// 検索
-
-function searchReports() {
-
-    const searchDate =
-        document.getElementById("searchDate").value;
-
-    const searchName =
-        document.getElementById("searchName").value.trim();
-
-
-    const filteredReports =
-        allReports.filter(function(report) {
-
-            let reportDate = "";
-
-            if (report.date) {
-
-                const date =
-                    new Date(report.date);
-
-                if (!isNaN(date)) {
-
-                    reportDate =
-                        date.getFullYear() +
-                        "-" +
-                        String(date.getMonth() + 1).padStart(2, "0") +
-                        "-" +
-                        String(date.getDate()).padStart(2, "0");
-
-                } else {
-
-                    reportDate =
-                        String(report.date)
-                        .replace(/\//g, "-")
-                        .substring(0, 10);
-
-                }
-
-            }
-
-
-            const dateMatch =
-                !searchDate ||
-                reportDate === searchDate;
-
-
-            const nameMatch =
-                !searchName ||
-                String(report.name || "")
-                .includes(searchName);
-
-
-            return dateMatch && nameMatch;
-
-        });
-
-
-    displayReports(filteredReports);
-
-}
-
-
 // ページを開いたら読み込む
-
 loadReports();
 
 </script>
