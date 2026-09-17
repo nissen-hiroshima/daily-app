@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="manifest" href="manifest.json">
-    
     <title>株式会社日宣プロダクト 業務管理</title>
 
     <style>
@@ -248,7 +246,10 @@ function openContract() {
 }
 
 function openPasswordManager() {
-    window.location.href = "https://script.google.com/macros/s/AKfycbx8PeP2-LfTshczn71OMwd0XUDJ-6RKMLHL35ObBAOPYfAVwOUjEjekRgXVuonrN6PuIg/exec";
+    window.open(
+        "https://script.google.com/macros/s/AKfycbx8PeP2-LfTshczn71OMwd0XUDJ-6RKMLHL35ObBAOPYfAVwOUjEjekRgXVuonrN6PuIg/exec",
+        "_blank"
+    );
 }
 
 </script>
