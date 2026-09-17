@@ -26,13 +26,6 @@
             border-bottom: 1px solid #ddd;
         }
 
-        .logo {
-    width: 180px;
-    height: auto;
-    display: block;
-    margin-bottom: 15px;
-}
-        
         .company-name {
             font-size: 18px;
             font-weight: bold;
@@ -76,7 +69,7 @@
 
         .menu-card {
             background: white;
-            min-height: 190px;
+            min-height: 210px;
             border: 1px solid #ddd;
             border-radius: 12px;
             padding: 30px 20px;
@@ -137,15 +130,11 @@
 <body>
 
 <header>
-
-    <img src="nissen-logo.png" alt="株式会社日宣プロダクト" class="logo">
-
     <div class="company-name">
         株式会社日宣プロダクト
     </div>
 
     <h1>業務管理</h1>
-
 </header>
 
 
@@ -159,51 +148,60 @@
 
     <div class="menu">
 
-        <!-- 業務日報 -->
-<div class="menu-card" onclick="openReport()">
-    <div class="icon">📝</div>
-    <h3>業務日報</h3>
-    <p>日報の入力・確認</p>
-
-    <div style="margin-top:15px;">
-        <button onclick="event.stopPropagation(); openReportList();">
-            日報一覧
-        </button>
+    <!-- 会社カレンダー・各自スケジュール -->
+    <div class="menu-card" onclick="openSchedule()">
+        <div class="icon">📅</div>
+        <h3>会社カレンダー<br>各自スケジュール</h3>
+        <p>会社予定・個人予定</p>
     </div>
+
+
+    <!-- ToDo -->
+    <div class="menu-card" onclick="openTodo()">
+        <div class="icon">✅</div>
+        <h3>ToDo</h3>
+        <p>やること・期限の管理</p>
+    </div>
+
+
+    <!-- 制作管理 -->
+    <div class="menu-card" onclick="openProduction()">
+        <div class="icon">🎨</div>
+        <h3>制作管理</h3>
+        <p>案件・制作状況の管理</p>
+    </div>
+
+
+    <!-- 業務日報 -->
+    <div class="menu-card" onclick="openReport()">
+        <div class="icon">📝</div>
+        <h3>業務日報</h3>
+        <p>日報の入力・確認</p>
+
+        <div style="margin-top:15px;">
+            <button onclick="event.stopPropagation(); openReportList();">
+                日報一覧
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ID・パスワード管理 -->
+    <div class="menu-card" onclick="openPasswordManager()">
+        <div class="icon">🔐</div>
+        <h3>ID・パスワード管理</h3>
+        <p>各種サイトのID・パスワード管理</p>
+    </div>
+
+
+    <!-- 契約管理 -->
+    <div class="menu-card" onclick="openContract()">
+        <div class="icon">📄</div>
+        <h3>契約管理</h3>
+        <p>契約情報・更新管理</p>
+    </div>
+
 </div>
-
-
-        <!-- 制作管理 -->
-        <div class="menu-card" onclick="openProduction()">
-            <div class="icon">🎨</div>
-            <h3>制作管理</h3>
-            <p>案件・制作状況の管理</p>
-        </div>
-
-
-        <!-- カレンダー -->
-        <div class="menu-card" onclick="openSchedule()">
-            <div class="icon">📅</div>
-            <h3>会社カレンダー<br>各自スケジュール</h3>
-            <p>会社予定・個人予定</p>
-        </div>
-
-
-        <!-- 契約管理 -->
-        <div class="menu-card" onclick="openContract()">
-            <div class="icon">📄</div>
-            <h3>契約管理</h3>
-            <p>契約情報・更新管理</p>
-        </div>
-
-                <!-- ID・パスワード管理 -->
-        <div class="menu-card" onclick="openPasswordManager()">
-            <div class="icon">🔐</div>
-            <h3>ID・パスワード管理</h3>
-            <p>各種サイトのID・パスワード管理</p>
-        </div>
-
-    </div>
 
 </main>
 
@@ -220,6 +218,10 @@ function openReportList() {
 
 function openProduction() {
     window.location.href = "https://script.google.com/macros/s/AKfycbzl0AnG0EYg3KnUi0G-a6OgByYGxd9p60e2hXxdw4cslAbxdFGkUZ557tBMdZKVGG1P/exec";
+}
+
+function openTodo() {
+    window.location.href = "https://script.google.com/macros/s/AKfycbz-v9b8GZPdJJbbwW9E9xsxGH3APKrhZmNYHucqT79eg-7dFQvxvUPo_NOFwg9rHCL4fw/exec";
 }
 
 function openSchedule() {
