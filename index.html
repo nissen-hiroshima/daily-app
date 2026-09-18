@@ -214,6 +214,14 @@
         <p>契約情報・更新管理</p>
     </div>
 
+
+    <!-- 管理者専用 -->
+<div class="menu-card" onclick="openAdmin()">
+    <div class="icon">🔒</div>
+    <h3>管理者専用</h3>
+    <p>管理者のみ利用できます</p>
+</div>
+
 </div>
 
 </main>
@@ -255,6 +263,9 @@ function openPasswordManager() {
     );
 }
 
+function openAdmin() {
+    window.location.href = "ここに管理者専用ページのURL";
+}
 </script>
 
 </body>
