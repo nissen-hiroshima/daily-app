@@ -273,6 +273,7 @@ function openAdmin() {
 }
 
 </script>
+
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
@@ -280,5 +281,15 @@ function openAdmin() {
     });
   }
 </script>
+  <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("Service Worker 登録成功"))
+      .catch(error => console.error("Service Worker 登録失敗:", error));
+  });
+}
+</script>
+
 </body>
 </html>
