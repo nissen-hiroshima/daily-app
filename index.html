@@ -284,5 +284,52 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import {
+    getMessaging,
+    getToken
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA7ihB1-aqHXlZ0Hz8NZz9OWbilUTAvy7o",
+    authDomain: "gyomu-kanri-2acaf.firebaseapp.com",
+    projectId: "gyomu-kanri-2acaf",
+    storageBucket: "gyomu-kanri-2acaf.firebasestorage.app",
+    messagingSenderId: "265801141421",
+    appId: "1:265801141421:web:fdd61594aedbdc419c0a24"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  window.enableNotifications = async function () {
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        alert("通知が許可されませんでした。");
+        return;
+      }
+
+      const registration =
+        await navigator.serviceWorker.ready;
+
+      const token = await getToken(messaging, {
+        vapidKey: "BKd1nb8gQmNG_AqiIfW-WCtfV3tg_H_68ZySYWB-8iSnZe_vsHMn8YonGIBkLzm2LWI9_-QT8mBXLf0B-YN4CcE",
+        serviceWorkerRegistration: registration
+      });
+
+      console.log("FCM登録トークン:", token);
+
+      alert("通知を受け取る設定が完了しました。");
+
+    } catch (error) {
+      console.error("通知設定エラー:", error);
+      alert("通知設定でエラーが発生しました。");
+    }
+  };
+</script>
+  
 </body>
 </html>
